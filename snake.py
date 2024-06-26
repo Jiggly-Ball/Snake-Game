@@ -2,7 +2,6 @@ import pygame
 
 from pygame import QUIT, KEYDOWN, MOUSEBUTTONDOWN
 from pygame.locals import DOUBLEBUF
-from pygame_widgets.button import Button
 
 from const import *
 from entities import *
@@ -33,28 +32,7 @@ clock = pygame.time.Clock()
 
 
 def menu():
-    button = Button(
-        screen,
-        100,
-        100,
-        300,
-        150,
-        text="Hello",
-        fontSize=50,
-        margin=20,
-        inactiveColour=(255, 0, 0),
-        pressedColour=(0, 255, 0),
-        radius=20,
-        onClick=lambda: main(),
-    )
-    while True:
-        events = pygame.event.get()
-        for event in events:
-            if event.type == QUIT:
-                raise
-        button.listen(events)
-        button.draw()
-        pygame.display.update()
+    ...
 
 
 def main():
