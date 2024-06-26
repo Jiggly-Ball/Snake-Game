@@ -7,7 +7,7 @@ from pygame_widgets.button import Button
 from const import *
 from entities import *
 from utils import *
-
+ 
 
 icon = pygame.image.load("assets/icon.ico")
 pygame.display.set_icon(icon)
