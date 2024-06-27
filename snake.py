@@ -31,10 +31,6 @@ eat_sound = pygame.mixer.Sound("assets/eat_sound.mp3")
 clock = pygame.time.Clock()
 
 
-def menu():
-    ...
-
-
 def main():
     snake = Snake()
     apple = Apple.spawn(snake=snake)
@@ -58,7 +54,7 @@ def main():
         "Click anywhere on the screen to restart.", True, DEATH_TEXT_COLOUR
     )
     restart_rect = restart.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.8))
-    fps = 3
+    fps = BASE_FPS
 
     while True:
         screen.fill(
@@ -95,7 +91,7 @@ def main():
             if event.type == MOUSEBUTTONDOWN and snake.dead:
                 snake = Snake()
                 apple = Apple.spawn(snake=snake)
-                fps = 3
+                fps = BASE_FPS
                 bg_music.play(-1)
                 death_play = False
 
@@ -106,7 +102,7 @@ def main():
             snake.body.append(
                 pygame.Rect(last_body.x, last_body.y, BLOCK_SIZE, BLOCK_SIZE)
             )
-            if len(snake.body) % 5 == 0:
+            if len(snake.body) % 3 == 0:
                 fps += 1
 
         draw_grid(screen)
@@ -143,6 +139,6 @@ def main():
 
 if __name__ == "__main__":
     try:
-        menu()
+        main()
     except RuntimeError:
         pygame.quit()
