@@ -70,19 +70,19 @@ def main():
 
             if event.type == KEYDOWN:
                 if not move:
-                    if event.key == pygame.K_a:
+                    if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                         move = True
                         snake.x_dir = snake.x_dir or -1
                         snake.y_dir = 0
-                    elif event.key == pygame.K_d:
+                    elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         move = True
                         snake.x_dir = snake.x_dir or 1
                         snake.y_dir = 0
-                    elif event.key == pygame.K_w:
+                    elif event.key == pygame.K_w or event.key == pygame.K_UP:
                         move = True
                         snake.x_dir = 0
                         snake.y_dir = snake.y_dir or -1
-                    elif event.key == pygame.K_s:
+                    elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
                         move = True
                         snake.x_dir = 0
                         snake.y_dir = snake.y_dir or 1
