@@ -30,7 +30,6 @@ eat_sound = pygame.mixer.Sound("assets/eat_sound.mp3")
 
 clock = pygame.time.Clock()
 
-
 def main():
     snake = Snake()
     apple = Apple.spawn(snake=snake)
@@ -38,7 +37,7 @@ def main():
     death_play = False
     score_text = score_font.render("1", True, SCORE_TEXT_COLOUR)
     score_rect = score_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10))
-    move = False  # For handling rapid key strokes; allows only a single keystroke every frame
+    move = False  # For handling rapid key strokes; allows only a single keystroke every frame.
 
     highscore = load_highscore(HIGHSCORE_PATH)
     highscore_text = highscore_font.render(
