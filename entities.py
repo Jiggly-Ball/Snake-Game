@@ -13,7 +13,6 @@ class Snake:
         self.y = BLOCK_SIZE
         self.x_dir = 1
         self.y_dir = 0
-        self.speed = 1500
         self.head: pygame.Rect = pygame.Rect(self.x, self.y, BLOCK_SIZE, BLOCK_SIZE)
         self.body: List[pygame.Rect] = [
             pygame.Rect(self.x - BLOCK_SIZE, self.y, BLOCK_SIZE, BLOCK_SIZE)
@@ -34,14 +33,16 @@ class Snake:
             self.head.y += self.y_dir * BLOCK_SIZE
             self.body.remove(self.head)
 
-        for body in self.body:
-            if self.head.x == body.x and self.head.y == body.y:
+            if self.head.x not in range(0, SCREEN_WIDTH) or self.head.y not in range(
+                0, SCREEN_HEIGHT
+            ):
                 self.dead = True
 
-        if self.head.x not in range(0, SCREEN_WIDTH) or self.head.y not in range(
-            0, SCREEN_HEIGHT
-        ):
-            self.dead = True
+            if not self.dead:
+                for body in self.body:
+                    if self.head.x == body.x and self.head.y == body.y:
+                        self.dead = True
+                        break
 
 
 class Apple:
@@ -55,10 +56,15 @@ class Apple:
 
     @classmethod
     def spawn(cls, snake: Snake) -> Apple:
-        x = (randint(0, SCREEN_WIDTH - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
-        y = (randint(0, SCREEN_HEIGHT - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
-
-        for body in snake.body:
-            if body.x == x and body.y == y:
-                return Apple.spawn(snake=snake)
+        invalid = True
+        total_body = [snake.head] + snake.body
+        while invalid:
+            x = (randint(0, SCREEN_WIDTH - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
+            y = (randint(0, SCREEN_HEIGHT - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
+            for body in total_body:
+                if body.x != x or body.y != y:
+                    invalid = False
+                else:  # if the condition above isn't met even for a single body; the coordinates are reinitialized.
+                    invalid = True
+                    break
         return cls(x=x, y=y)
