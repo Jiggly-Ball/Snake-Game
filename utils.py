@@ -1,8 +1,47 @@
-import pickle
 import os
+import pickle
 import pygame
 
+from typing import Optional, Union, Sequence, Tuple
+
 from const import SCREEN_HEIGHT, SCREEN_WIDTH, BLOCK_SIZE
+
+
+class Text:
+    def __init__(
+        self,
+        window: pygame.Surface,
+        size: int,
+        center: Tuple[int, int],
+        colour: Union[int, str, Sequence[int]],
+        bold: bool = False,
+        italic: bool = False,
+        name: Optional[Union[str, bytes]] = None,
+    ) -> None:
+        self.window = window
+        self.center = center
+        self.colour = colour
+        self.font = pygame.font.SysFont(name, size, bold, italic)
+        self.rect: Optional[pygame.Rect] = None
+
+    def render(
+        self,
+        text: str,
+        colour: Optional[Union[int, str, Sequence[int]]] = None,
+        bg_colour: Optional[Union[int, str, Sequence[int]]] = None,
+        antialias: bool = True,
+        wrap_length: int = 0,
+    ) -> None:
+        rendered_text = self.font.render(
+            text=text,
+            antialias=antialias,
+            color=colour or self.colour,
+            bgcolor=bg_colour,
+            wraplength=wrap_length,
+        )
+        if self.rect is None:
+            self.rect = rendered_text.get_rect(center=self.center)
+        self.window.blit(rendered_text, self.rect)
 
 
 def draw_grid(window: pygame.Surface):
