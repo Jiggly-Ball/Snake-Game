@@ -1,7 +1,7 @@
 BASE_FPS: int = 5
 SCREEN_WIDTH: int = 750
 SCREEN_HEIGHT: int = 750
-BLOCK_SIZE: int = 50
+BLOCK_SIZE: int = 50  # 25 | 50 | 150 | 250
 SNAKE_COLOUR: str = "green"
 APPLE_COLOUR: str = "red"
 SCORE_TEXT_COLOUR: int = 0xFFFF14
