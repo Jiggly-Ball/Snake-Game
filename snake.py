@@ -66,29 +66,29 @@ class Game:
                     raise
 
                 if event.type == KEYDOWN:
-                    if not move:
+                    if not self.move:
                         if snake.x_dir != -1 and (
                             event.key == pygame.K_a or event.key == pygame.K_LEFT
                         ):
-                            move = True
+                            self.move = True
                             snake.x_dir = snake.x_dir or -1
                             snake.y_dir = 0
                         elif snake.x_dir != 1 and (
                             event.key == pygame.K_d or event.key == pygame.K_RIGHT
                         ):
-                            move = True
+                            self.move = True
                             snake.x_dir = snake.x_dir or 1
                             snake.y_dir = 0
                         elif snake.y_dir != 1 and (
                             event.key == pygame.K_w or event.key == pygame.K_UP
                         ):
-                            move = True
+                            self.move = True
                             snake.x_dir = 0
                             snake.y_dir = snake.y_dir or -1
                         elif snake.y_dir != -1 and (
                             event.key == pygame.K_s or event.key == pygame.K_DOWN
                         ):
-                            move = True
+                            self.move = True
                             snake.x_dir = 0
                             snake.y_dir = snake.y_dir or 1
 
@@ -114,7 +114,7 @@ class Game:
             snake.update()
 
             pygame.draw.rect(self.screen, SNAKE_COLOUR, snake.head, BLOCK_SIZE)
-            move = False
+            self.move = False
             for body in snake.body:
                 pygame.draw.rect(self.screen, SNAKE_COLOUR, body, BLOCK_SIZE)
 
