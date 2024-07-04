@@ -2,9 +2,18 @@ import os
 import pickle
 import pygame
 
+from dataclasses import dataclass
 from typing import Optional, Union, Sequence, Tuple
 
 from core.const import SCREEN_HEIGHT, SCREEN_WIDTH, BLOCK_SIZE
+
+
+@dataclass
+class ButtonStyle:
+    button_width: int
+    button_height: int
+    text_size: int
+    text_colour: Union[str, int]
 
 
 class Text:
@@ -44,6 +53,46 @@ class Text:
         if self.rect is None:
             self.rect = rendered_text.get_rect(center=self.center)
         self.window.blit(rendered_text, self.rect)
+
+
+class Button:
+    def __init__(
+        self,
+        text: str,
+        x: int,
+        y: int,
+        button_style: ButtonStyle,
+        window: pygame.Surface,
+    ) -> None:
+        self.text = text
+        self.x = x
+        self.y = y
+        self.button_style = button_style
+        self.window = window
+
+    def run(self) -> bool:
+        button_text = Text(
+            self.window,
+            self.button_style.text_size,
+            (self.x, self.y + self.button_style.button_height // 2),
+            self.button_style.text_colour,
+        )
+        button_rect = pygame.rect.Rect(
+            self.x - self.button_style.button_width // 2,
+            self.y,
+            self.button_style.button_width,
+            self.button_style.button_height,
+        )
+        pygame.draw.rect(self.window, "black", button_rect, 0, 5)
+        pygame.draw.rect(self.window, "green", button_rect, 2, 5)
+        button_text.render(self.text)
+
+        pos = pygame.mouse.get_pos()
+        if button_rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1:
+                return True
+            return False
+        return False
 
 
 def draw_grid(window: pygame.Surface):
