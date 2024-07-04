@@ -53,22 +53,27 @@ class Game(State):
                     raise
 
                 if event.type == KEYDOWN:
-                    if not self.move and event.key in KEY_ALL:
-                        self.move = True
+                    if not self.move:
                         if snake.x_dir != 1 and (event.key in KEY_LEFT):
                             snake.x_dir = snake.x_dir or -1
                             snake.y_dir = 0
+                            self.move = True
                         elif snake.x_dir != -1 and (event.key in KEY_RIGHT):
                             snake.x_dir = snake.x_dir or 1
                             snake.y_dir = 0
+                            self.move = True
                         elif snake.y_dir != -1 and (event.key in KEY_UP):
                             snake.x_dir = 0
                             snake.y_dir = snake.y_dir or -1
+                            self.move = True
                         elif snake.y_dir != 1 and (event.key in KEY_DOWN):
                             snake.x_dir = 0
                             snake.y_dir = snake.y_dir or 1
+                            self.move = True
 
                 if event.type == MOUSEBUTTONDOWN and snake.dead:
+                    self.manager.change_state("Menu")
+                    self.manager.run_current_state()
                     snake = Snake()
                     apple = Apple.spawn(snake=snake)
                     self.fps = BASE_FPS
@@ -82,12 +87,12 @@ class Game(State):
                     pygame.Rect(last_body.x, last_body.y, BLOCK_SIZE, BLOCK_SIZE)
                 )
                 apple = Apple.spawn(snake=snake)
-                if len(snake.body) % 4 == 0:
-                    self.fps += 1
+                if len(snake.body) % 5 == 0:
+                    self.fps += 2
 
-            draw_grid(self.window)
             apple.update(self.window)
             snake.update()
+            draw_grid(self.window)
 
             pygame.draw.rect(self.window, SNAKE_COLOUR, snake.head, BLOCK_SIZE)
             self.move = False
