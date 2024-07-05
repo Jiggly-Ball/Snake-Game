@@ -3,9 +3,9 @@ import pygame
 from pygame import QUIT
 
 from states import State
-from core.utils import Text, draw_grid
-from core.const import SCREEN_WIDTH, SCREEN_HEIGHT
+from core.utils import Box, Text, draw_grid
 from core.errors import ExitGameError
+from core.const import SCREEN_WIDTH, SCREEN_HEIGHT
 from core.preset import blue_text_style
 
 
@@ -15,8 +15,15 @@ class Settings(State):
         self.fps = 60
 
     def run(self) -> None:
-        layer_width = SCREEN_WIDTH // 1.5
-        layer_height = SCREEN_HEIGHT // 1.2
+        box_width = SCREEN_WIDTH // 1.5
+        box_height = SCREEN_HEIGHT // 1.2
+        box = Box(
+            self.window,
+            (SCREEN_WIDTH - box_width) // 2,
+            (SCREEN_HEIGHT - box_height) // 2,
+            box_width,
+            box_height,
+        )
         bg_vol_text = Text(
             self.window,
             blue_text_style,
@@ -38,15 +45,7 @@ class Settings(State):
                     raise ExitGameError()
 
             draw_grid(self.window)
-            button_rect = pygame.rect.Rect(
-                (SCREEN_WIDTH - layer_width) // 2,
-                (SCREEN_HEIGHT - layer_height) // 2,
-                layer_width,
-                layer_height,
-            )
-            pygame.draw.rect(self.window, "black", button_rect, 0, 5)
-            pygame.draw.rect(self.window, "green", button_rect, 2, 5)
-
+            box.render()
             bg_vol_text.render("Music Volume")
 
             pygame.display.update()
