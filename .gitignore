@@ -156,6 +156,7 @@ cython_debug/
 
 # Certain files / folders
 data.bin
+settings.bin
 executable/
 
 # PyCharm
