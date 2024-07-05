@@ -6,38 +6,43 @@ from states import State
 from core.const import *
 from core.entities import *
 from core.utils import *
+from core.errors import ExitGameError
+from core.preset import blue_text_style, red_text_style
 
 
 class Game(State):
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
+    def __init__(self, *args) -> None:
+        super().__init__(*args)
 
-        self.death_play = False
-        self.move = False  # For handling rapid key strokes; allows only a single keystroke every frame.
-        self.fps = BASE_FPS
-        self.highscore = load_highscore(HIGHSCORE_PATH)
-
-        self.bg_music = pygame.mixer.Sound("assets/bg_music.mp3")
-        self.death_sound = pygame.mixer.Sound("assets/death_sound.mp3")
-        self.eat_sound = pygame.mixer.Sound("assets/eat_sound.mp3")
+        self.bg_music = pygame.mixer.Sound(BG_MUSIC_PATH)
+        self.death_sound = pygame.mixer.Sound(DEATH_SFX_PATH)
+        self.eat_sound = pygame.mixer.Sound(EAT_SFX_PATH)
 
         self.score_text = Text(
-            self.window, 100, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10), SCORE_TEXT_COLOUR
+            self.window, blue_text_style, 100, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10)
         )
         self.highscore_text = Text(
-            self.window, 50, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.1), SCORE_TEXT_COLOUR
+            self.window, blue_text_style, 50, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.1)
         )
         self.death_text = Text(
-            self.window, 30, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), DEATH_TEXT_COLOUR
+            self.window, red_text_style, 30, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
         )
         self.restart_text = Text(
-            self.window, 30, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.8), DEATH_TEXT_COLOUR
+            self.window, red_text_style, 30, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.8)
         )
 
     def run(self) -> None:
         snake = Snake()
         apple = Apple.spawn(snake=snake)
+        self.bg_music.set_volume(self.volume.bg_vol)
+        self.death_sound.set_volume(self.volume.sfx_vol)
+        self.eat_sound.set_volume(self.volume.sfx_vol)
         self.bg_music.play(-1)
+
+        self.death_play = False
+        self.move = False  # For handling rapid key strokes; allows only a single keystroke every frame.
+        self.fps = BASE_FPS
+        self.highscore = load_highscore(HIGHSCORE_PATH)
 
         while True:
             self.window.fill(
@@ -50,7 +55,7 @@ class Game(State):
 
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    raise
+                    raise ExitGameError()
 
                 if event.type == KEYDOWN:
                     if not self.move:
@@ -73,12 +78,12 @@ class Game(State):
 
                 if event.type == MOUSEBUTTONDOWN and snake.dead:
                     self.manager.change_state("Menu")
-                    self.manager.run_current_state()
-                    snake = Snake()
-                    apple = Apple.spawn(snake=snake)
-                    self.fps = BASE_FPS
-                    self.bg_music.play(-1)
-                    self.death_play = False
+                    self.manager.exit_current_state()
+                    # snake = Snake()
+                    # apple = Apple.spawn(snake=snake)
+                    # self.fps = BASE_FPS
+                    # self.bg_music.play(-1)
+                    # self.death_play = False
 
             if snake.head.x == apple.x and snake.head.y == apple.y:
                 self.eat_sound.play()
