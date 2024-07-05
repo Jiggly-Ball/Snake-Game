@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import pickle
 import pygame
@@ -16,6 +18,15 @@ class TextStyle:
     italic: bool = False
     font_name: Optional[Union[str, bytes]] = None
 
+    def copy(self) -> TextStyle:
+        return TextStyle(
+            text_colour=self.text_colour,
+            text_bg_colour=self.text_bg_colour,
+            bold=self.bold,
+            italic=self.italic,
+            font_name=self.font_name,
+        )
+
 
 @dataclass
 class ButtonStyle:
@@ -23,11 +34,44 @@ class ButtonStyle:
     button_height: int
     text_style: TextStyle
 
+    def copy(self) -> ButtonStyle:
+        return ButtonStyle(
+            button_width=self.button_width,
+            button_height=self.button_height,
+            text_style=self.text_style,
+        )
+
 
 @dataclass
 class MusicVol:
     bg_vol: float = 0.5
     sfx_vol: float = 0.5
+
+    def copy(self) -> MusicVol:
+        return MusicVol(bg_vol=self.bg_vol, sfx_vol=self.sfx_vol)
+
+
+class Box:
+    __slots__ = ("window", "fill_colour", "outline_colour", "box_rect")
+
+    def __init__(
+        self,
+        window: pygame.Surface,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        fill_colour: Union[int, str, Sequence[int]] = "black",
+        outline_colour: Union[int, str, Sequence[int]] = "green",
+    ) -> None:
+        self.window = window
+        self.fill_colour = fill_colour
+        self.outline_colour = outline_colour
+        self.box_rect = pygame.rect.Rect(x, y, width, height)
+
+    def render(self) -> None:
+        pygame.draw.rect(self.window, self.fill_colour, self.box_rect, 0, 5)
+        pygame.draw.rect(self.window, self.outline_colour, self.box_rect, 2, 5)
 
 
 class Text:
@@ -43,7 +87,6 @@ class Text:
         self.window = window
         self.center = center
         self.text_style = text_style
-        self.text_size = text_size
         self.font = pygame.font.SysFont(
             self.text_style.font_name,
             text_size,
@@ -74,12 +117,9 @@ class Text:
 
 class Button:
     __slots__ = (
-        "text",
-        "x",
-        "y",
-        "text_size",
-        "button_style",
         "window",
+        "text",
+        "button_style",
         "__clicked",
         "button_text",
         "button_rect",
@@ -87,29 +127,27 @@ class Button:
 
     def __init__(
         self,
+        window: pygame.Surface,
         text: str,
         x: int,
         y: int,
         text_size: int,
         button_style: ButtonStyle,
-        window: pygame.Surface,
     ) -> None:
-        self.text = text
-        self.x = x
-        self.y = y
-        self.text_size = text_size
-        self.button_style = button_style
         self.window = window
+        self.text = text
+        self.button_style = button_style
         self.__clicked = False
+
         self.button_text = Text(
             self.window,
             self.button_style.text_style,
-            self.text_size,
-            (self.x, self.y + self.button_style.button_height // 2),
+            text_size,
+            (x, y + self.button_style.button_height // 2),
         )
         self.button_rect = pygame.rect.Rect(
-            self.x - self.button_style.button_width // 2,
-            self.y,
+            x - self.button_style.button_width // 2,
+            y,
             self.button_style.button_width,
             self.button_style.button_height,
         )
