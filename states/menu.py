@@ -3,42 +3,58 @@ import pygame
 from pygame import QUIT, MOUSEBUTTONDOWN
 
 from states import State
-from core.utils import Button, ButtonStyle, draw_grid
+from core.utils import Box, Text, Button, draw_grid
 from core.const import SCREEN_WIDTH, SCREEN_HEIGHT
 from core.errors import ExitGameError
-from core.preset import menu_button_style
+from core.preset import menu_button_style, blue_text_style
 
 
 class Menu(State):
     def __init__(self, *args) -> None:
         super().__init__(*args)
         self.fps = 60
-
-    def run(self) -> None:
-        play_button = Button(
+        self.play_button = Button(
+            self.window,
             "Play",
             SCREEN_WIDTH // 2,
             (SCREEN_HEIGHT // 2) - 75,
             25,
             menu_button_style,
-            self.window,
         )
-        settings_button = Button(
+        self.settings_button = Button(
+            self.window,
             "Settings",
             SCREEN_WIDTH // 2,
             SCREEN_HEIGHT // 2,
             25,
             menu_button_style,
-            self.window,
         )
-        quit_button = Button(
+        self.quit_button = Button(
+            self.window,
             "Quit",
             SCREEN_WIDTH // 2,
             (SCREEN_HEIGHT // 2) + 75,
             25,
             menu_button_style,
-            self.window,
         )
+
+        title_style = blue_text_style.copy()
+        title_style.bold = True
+        self.title_text = Text(
+            self.window, title_style, 100, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 5)
+        )
+
+        box_width = SCREEN_WIDTH // 2.2
+        box_height = SCREEN_HEIGHT // 2
+        self.box = Box(
+            self.window,
+            (SCREEN_WIDTH - box_width) // 2,
+            (SCREEN_HEIGHT - box_height) // 1.7,
+            box_width,
+            box_height,
+        )
+
+    def run(self) -> None:
         while True:
             self.window.fill(
                 (
@@ -53,21 +69,23 @@ class Menu(State):
                     raise ExitGameError()
 
                 elif event.type == MOUSEBUTTONDOWN and event.button == 1:
-                    if play_button.click():
+                    if self.play_button.click():
                         self.manager.change_state("Game")
                         self.manager.exit_current_state()
 
-                    elif settings_button.click():
+                    elif self.settings_button.click():
                         self.manager.change_state("Settings")
                         self.manager.exit_current_state()
 
-                    elif quit_button.click():
+                    elif self.quit_button.click():
                         raise ExitGameError()
 
             draw_grid(self.window)
-            play_button.render()
-            settings_button.render()
-            quit_button.render()
+            self.box.render()
+            self.play_button.render()
+            self.settings_button.render()
+            self.quit_button.render()
+            self.title_text.render("SNAKE GAME")
 
             pygame.display.update()
             self.clock.tick(self.fps)
