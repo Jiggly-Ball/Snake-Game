@@ -5,10 +5,9 @@ import pygame
 from pygame import QUIT, KEYDOWN, MOUSEBUTTONDOWN
 from pygame.locals import DOUBLEBUF
 
-from core.const import *
-from core.entities import *
-from core.utils import *
-
+from core.const import SETTINGS_PATH, SCREEN_HEIGHT, SCREEN_WIDTH
+from core.utils import load_settings
+from core.errors import ExitStateError, ExitGameError
 from states import StateManager, GAME_STATES
 
 
@@ -25,16 +24,22 @@ class SnakeGame:
     def __init__(self) -> None:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), DOUBLEBUF)
         self.screen.set_alpha(None)
-        self.state_manager = StateManager(self.screen, *GAME_STATES)
+        self.state_manager = StateManager(
+            self.screen, load_settings(SETTINGS_PATH), *GAME_STATES
+        )
 
     def run(self) -> None:
         self.state_manager.change_state("Menu")
-        self.state_manager.run_current_state()
+        while True:
+            try:
+                self.state_manager.run_current_state()
+            except ExitStateError:
+                pass
 
 
 if __name__ == "__main__":
     try:
         sanke_game = SnakeGame()
         sanke_game.run()
-    except RuntimeError:
+    except ExitGameError:
         pygame.quit()
