@@ -1,16 +1,17 @@
 import pygame
 
-from pygame import QUIT
+from pygame import QUIT, MOUSEBUTTONDOWN
 
 from states import State
 from core.utils import Button, ButtonStyle, draw_grid
 from core.const import SCREEN_WIDTH, SCREEN_HEIGHT
+from core.errors import ExitGameError
+from core.preset import menu_button_style
 
 
 class Menu(State):
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
-        self.menu_button = ButtonStyle(150, 40, 25, 0xFFFF14)
+    def __init__(self, *args) -> None:
+        super().__init__(*args)
         self.fps = 60
 
     def run(self) -> None:
@@ -18,21 +19,24 @@ class Menu(State):
             "Play",
             SCREEN_WIDTH // 2,
             (SCREEN_HEIGHT // 2) - 75,
-            self.menu_button,
+            25,
+            menu_button_style,
             self.window,
         )
         settings_button = Button(
             "Settings",
             SCREEN_WIDTH // 2,
             SCREEN_HEIGHT // 2,
-            self.menu_button,
+            25,
+            menu_button_style,
             self.window,
         )
         quit_button = Button(
             "Quit",
             SCREEN_WIDTH // 2,
             (SCREEN_HEIGHT // 2) + 75,
-            self.menu_button,
+            25,
+            menu_button_style,
             self.window,
         )
         while True:
@@ -46,19 +50,24 @@ class Menu(State):
 
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    raise
+                    raise ExitGameError()
+
+                elif event.type == MOUSEBUTTONDOWN and event.button == 1:
+                    if play_button.click():
+                        self.manager.change_state("Game")
+                        self.manager.exit_current_state()
+
+                    elif settings_button.click():
+                        self.manager.change_state("Settings")
+                        self.manager.exit_current_state()
+
+                    elif quit_button.click():
+                        raise ExitGameError()
 
             draw_grid(self.window)
-            if play_button.run():
-                self.manager.change_state("Game")
-                self.manager.run_current_state()
-
-            elif settings_button.run():
-                self.manager.change_state("Settings")
-                self.manager.run_current_state()
-
-            elif quit_button.run():
-                raise
+            play_button.render()
+            settings_button.render()
+            quit_button.render()
 
             pygame.display.update()
             self.clock.tick(self.fps)
