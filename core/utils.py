@@ -42,7 +42,7 @@ class ButtonStyle:
             button_height=self.button_height,
             text_style=self.text_style,
             fill_colour=self.fill_colour,
-            outline_colour=self.outline_colour
+            outline_colour=self.outline_colour,
         )
 
 
@@ -159,8 +159,12 @@ class Button:
     def render(self) -> None:
         """Manually render the buttons."""
 
-        pygame.draw.rect(self.window, self.button_style.fill_colour, self.button_rect, 0, 5)
-        pygame.draw.rect(self.window, self.button_style.outline_colour, self.button_rect, 2, 5)
+        pygame.draw.rect(
+            self.window, self.button_style.fill_colour, self.button_rect, 0, 5
+        )
+        pygame.draw.rect(
+            self.window, self.button_style.outline_colour, self.button_rect, 2, 5
+        )
         self.button_text.render(self.text)
 
     def click(self) -> bool:
