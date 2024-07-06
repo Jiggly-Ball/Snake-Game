@@ -33,12 +33,16 @@ class ButtonStyle:
     button_width: int
     button_height: int
     text_style: TextStyle
+    fill_colour: Union[int, str, Sequence[int]] = "black"
+    outline_colour: Union[int, str, Sequence[int]] = "green"
 
     def copy(self) -> ButtonStyle:
         return ButtonStyle(
             button_width=self.button_width,
             button_height=self.button_height,
             text_style=self.text_style,
+            fill_colour=self.fill_colour,
+            outline_colour=self.outline_colour
         )
 
 
@@ -155,8 +159,8 @@ class Button:
     def render(self) -> None:
         """Manually render the buttons."""
 
-        pygame.draw.rect(self.window, "black", self.button_rect, 0, 5)
-        pygame.draw.rect(self.window, "green", self.button_rect, 2, 5)
+        pygame.draw.rect(self.window, self.button_style.fill_colour, self.button_rect, 0, 5)
+        pygame.draw.rect(self.window, self.button_style.outline_colour, self.button_rect, 2, 5)
         self.button_text.render(self.text)
 
     def click(self) -> bool:
@@ -174,13 +178,68 @@ class Button:
         pos = pygame.mouse.get_pos()
 
         if self.button_rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] == 1 and not self.__clicked:
+            if pygame.mouse.get_pressed()[0] and not self.__clicked:
                 self.__clicked = True
                 return True
         if pygame.mouse.get_pressed()[0] == 0:
             self.__clicked = False
 
         return False
+
+
+class Slider:
+    button_down = False
+    __slots__ = (
+        "window",
+        "width",
+        "initial",
+        "value",
+        "additional",
+        "clamp",
+        "min_pos",
+        "max_pos",
+        "slider_img",
+        "slider_rect",
+        "slider_path",
+    )
+
+    def __init__(
+        self,
+        window: pygame.Surface,
+        slider_img: pygame.Surface,
+        x: int,
+        y: int,
+        initial: float = 0.0,
+    ) -> None:
+        self.width = 100  # The length of the slider
+        self.window = window
+
+        self.min_pos = x
+        self.max_pos = x + self.width
+
+        self.additional = self.min_pos / 100
+        self.value = initial
+        preset_x = (initial + self.additional) * self.width
+
+        self.clamp = False
+        self.slider_img = slider_img
+        self.slider_rect = slider_img.get_rect(center=(preset_x, y))
+        self.slider_path = pygame.Rect(x, y, self.width, 1)
+
+    def run(self) -> None:
+        pygame.draw.rect(self.window, "white", self.slider_path)
+        self.window.blit(self.slider_img, self.slider_rect)
+
+        if self.button_down:
+            pos = pygame.mouse.get_pos()
+            if self.slider_rect.collidepoint(pos) or self.clamp:
+                self.clamp = True
+                self.slider_rect.centerx = max(min(self.max_pos, pos[0]), self.min_pos)
+                self.value = round(
+                    (self.slider_rect.centerx / self.width) - self.additional, 2
+                )
+        else:
+            self.clamp = False
 
 
 def draw_grid(window: pygame.Surface):
