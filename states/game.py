@@ -5,30 +5,47 @@ from pygame import QUIT, KEYDOWN, MOUSEBUTTONDOWN
 from states import State
 from core.const import *
 from core.entities import *
-from core.utils import *
+from core.utils import MusicVol, Text, Button, load_highscore, save_highscore, draw_grid
 from core.errors import ExitGameError
-from core.preset import blue_text_style, red_text_style
+from core.preset import blue_text_style, red_text_style, red_button_style
 
 
 class Game(State):
-    def __init__(self, *args) -> None:
+    def __init__(self, *args, volume: MusicVol) -> None:
         super().__init__(*args)
+        self.volume = volume
 
         self.bg_music = pygame.mixer.Sound(BG_MUSIC_PATH)
         self.death_sound = pygame.mixer.Sound(DEATH_SFX_PATH)
         self.eat_sound = pygame.mixer.Sound(EAT_SFX_PATH)
 
+        death_style = red_text_style.copy()
+        death_style.bold = True
+        self.death_text = Text(
+            self.window, death_style, 30, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        )
         self.score_text = Text(
             self.window, blue_text_style, 100, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10)
         )
         self.highscore_text = Text(
             self.window, blue_text_style, 50, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.1)
         )
-        self.death_text = Text(
-            self.window, red_text_style, 30, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+
+        self.restart_button = Button(
+            self.window,
+            "Restart",
+            SCREEN_WIDTH / 2.4,
+            SCREEN_HEIGHT / 1.8,
+            25,
+            red_button_style,
         )
-        self.restart_text = Text(
-            self.window, red_text_style, 30, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.8)
+        self.menu_button = Button(
+            self.window,
+            "Menu",
+            SCREEN_WIDTH / 1.7,
+            SCREEN_HEIGHT / 1.8,
+            25,
+            red_button_style,
         )
 
     def run(self) -> None:
@@ -77,9 +94,12 @@ class Game(State):
                             snake.y_dir = snake.y_dir or 1
                             move = True
 
-                if event.type == MOUSEBUTTONDOWN and snake.dead:
-                    self.manager.change_state("Menu")
-                    self.manager.exit_current_state()
+                if snake.dead and event.type == MOUSEBUTTONDOWN and event.button == 1:
+                    if self.restart_button.click():
+                        self.manager.exit_current_state()
+                    elif self.menu_button.click():
+                        self.manager.change_state("Menu")
+                        self.manager.exit_current_state()
                     # snake = Snake()
                     # apple = Apple.spawn(snake=snake)
                     # fps = BASE_FPS
@@ -115,7 +135,9 @@ class Game(State):
                     death_play = True
 
                 self.death_text.render("You have died!")
-                self.restart_text.render("Click anywhere on the screen to restart.")
+                self.restart_button.render()
+                self.menu_button.render()
+                # self.restart_text.render("Click anywhere on the screen to restart.")
 
                 if len(snake.body) > highscore:
                     highscore = len(snake.body)
