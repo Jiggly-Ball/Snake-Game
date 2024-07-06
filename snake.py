@@ -25,7 +25,7 @@ class SnakeGame:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), DOUBLEBUF)
         self.screen.set_alpha(None)
         self.state_manager = StateManager(
-            self.screen, load_settings(SETTINGS_PATH), *GAME_STATES
+            self.screen, *GAME_STATES, volume=load_settings(SETTINGS_PATH)
         )
 
     def run(self) -> None:

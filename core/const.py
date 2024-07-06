@@ -13,6 +13,7 @@ SETTINGS_PATH: str = "settings.bin"
 BG_MUSIC_PATH: str = "assets/bg_music.mp3"
 DEATH_SFX_PATH: str = "assets/death_sound.mp3"
 EAT_SFX_PATH: str = "assets/eat_sound.mp3"
+SLIDER_IMAGE_PATH: str = "assets/slider.png"
 KEY_LEFT: Tuple[int, int] = (pygame.K_a, pygame.K_LEFT)
 KEY_RIGHT: Tuple[int, int] = (pygame.K_d, pygame.K_RIGHT)
 KEY_UP: Tuple[int, int] = (pygame.K_w, pygame.K_UP)

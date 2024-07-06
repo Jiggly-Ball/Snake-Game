@@ -3,15 +3,17 @@ import pygame
 from pygame import QUIT, MOUSEBUTTONDOWN
 
 from states import State
-from core.utils import Box, Text, Button, draw_grid
+from core.utils import MusicVol, Box, Text, Button, draw_grid
 from core.const import SCREEN_WIDTH, SCREEN_HEIGHT
 from core.errors import ExitGameError
-from core.preset import menu_button_style, blue_text_style
+from core.preset import blue_button_style, blue_text_style
 
 
 class Menu(State):
-    def __init__(self, *args) -> None:
+    def __init__(self, *args, volume: MusicVol) -> None:
         super().__init__(*args)
+        self.volume = volume
+
         self.fps = 60
         self.play_button = Button(
             self.window,
@@ -19,7 +21,7 @@ class Menu(State):
             SCREEN_WIDTH // 2,
             (SCREEN_HEIGHT // 2) - 75,
             25,
-            menu_button_style,
+            blue_button_style,
         )
         self.settings_button = Button(
             self.window,
@@ -27,7 +29,7 @@ class Menu(State):
             SCREEN_WIDTH // 2,
             SCREEN_HEIGHT // 2,
             25,
-            menu_button_style,
+            blue_button_style,
         )
         self.quit_button = Button(
             self.window,
@@ -35,7 +37,7 @@ class Menu(State):
             SCREEN_WIDTH // 2,
             (SCREEN_HEIGHT // 2) + 75,
             25,
-            menu_button_style,
+            blue_button_style,
         )
 
         title_style = blue_text_style.copy()

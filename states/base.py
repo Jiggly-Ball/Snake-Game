@@ -4,15 +4,11 @@ import pygame
 from typing import Dict, Optional, Generator
 
 from core.errors import StateError, ExitStateError
-from core.utils import MusicVol
 
 
 class State:
-    def __init__(
-        self, /, window: pygame.Surface, volume: MusicVol, manager: StateManager
-    ) -> None:
+    def __init__(self, /, window: pygame.Surface, manager: StateManager) -> None:
         self.window = window
-        self.volume = volume
         self.manager = manager
         self.clock = pygame.time.Clock()
 
@@ -23,16 +19,14 @@ class State:
 class StateManager:
     __slots__ = ("__states", "__current_state")
 
-    def __init__(
-        self, window: pygame.Surface, volume: MusicVol, *states: State
-    ) -> None:
+    def __init__(self, window: pygame.Surface, *states: State, **kwargs) -> None:
         for state in states:
             assert issubclass(
                 state, State
             ), f"Expected subclass of `{State}` instead got `{state.__mro__[-2]}`."
 
         self.__states: Dict[str, State] = {
-            class_.__name__: class_(window, volume, self) for class_ in states
+            class_.__name__: class_(window, self, **kwargs) for class_ in states
         }
         self.__current_state: Optional[State] = None
 
@@ -56,7 +50,6 @@ class StateManager:
 
     def exit_current_state(self) -> None:
         if self.__current_state is not None:
-            self.__current_state.button_enable = False
             raise ExitStateError()
         else:
             raise StateError("No state has been set to exit from.")
