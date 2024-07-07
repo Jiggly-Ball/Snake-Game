@@ -105,14 +105,12 @@ class Text:
         colour: Optional[Union[int, str, Sequence[int]]] = None,
         text_bg_colour: Optional[Union[int, str, Sequence[int]]] = None,
         antialias: bool = True,
-        wrap_length: int = 0,
     ) -> None:
         rendered_text = self.font.render(
-            text=text,
-            antialias=antialias,
-            color=colour or self.text_style.text_colour,
-            bgcolor=text_bg_colour or self.text_style.text_bg_colour,
-            wraplength=wrap_length,
+            text,
+            antialias,
+            colour or self.text_style.text_colour,
+            text_bg_colour or self.text_style.text_bg_colour,
         )
         if self.rect is None:
             self.rect = rendered_text.get_rect(center=self.center)
@@ -192,7 +190,8 @@ class Button:
 
 
 class Slider:
-    button_down = False
+    button_down: bool = False
+    target: Optional[Slider] = None
     __slots__ = (
         "window",
         "width",
@@ -215,7 +214,7 @@ class Slider:
         y: int,
         initial: float = 0.0,
     ) -> None:
-        self.width = 100  # The length of the slider
+        self.width = 100  # The length of the slider path
         self.window = window
 
         self.min_pos = x
@@ -236,14 +235,18 @@ class Slider:
 
         if self.button_down:
             pos = pygame.mouse.get_pos()
-            if self.slider_rect.collidepoint(pos) or self.clamp:
+            if (Slider.target is None or Slider.target == self) and (
+                self.slider_rect.collidepoint(pos) or self.clamp
+            ):
                 self.clamp = True
+                Slider.target = self
                 self.slider_rect.centerx = max(min(self.max_pos, pos[0]), self.min_pos)
                 self.value = round(
                     (self.slider_rect.centerx / self.width) - self.additional, 2
                 )
         else:
             self.clamp = False
+            Slider.target = None
 
 
 def draw_grid(window: pygame.Surface):

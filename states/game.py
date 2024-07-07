@@ -97,14 +97,11 @@ class Game(State):
                 if snake.dead and event.type == MOUSEBUTTONDOWN and event.button == 1:
                     if self.restart_button.click():
                         self.manager.exit_current_state()
+                        # If you use this method before manager.change_state, it will reset the current state.
+
                     elif self.menu_button.click():
                         self.manager.change_state("Menu")
                         self.manager.exit_current_state()
-                    # snake = Snake()
-                    # apple = Apple.spawn(snake=snake)
-                    # fps = BASE_FPS
-                    # self.bg_music.play(-1)
-                    # death_play = False
 
             if snake.head.x == apple.x and snake.head.y == apple.y:
                 self.eat_sound.play()
@@ -113,8 +110,8 @@ class Game(State):
                     pygame.Rect(last_body.x, last_body.y, BLOCK_SIZE, BLOCK_SIZE)
                 )
                 apple = Apple.spawn(snake=snake)
-                if len(snake.body) % 5 == 0:
-                    fps += 2
+                if len(snake.body) % 4 == 0:
+                    fps += 1
 
             apple.update(self.window)
             snake.update()

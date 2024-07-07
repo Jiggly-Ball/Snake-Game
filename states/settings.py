@@ -17,7 +17,7 @@ class Settings(State):
         self.fps = 60
 
         self.slider_img = pygame.image.load(SLIDER_IMAGE_PATH).convert()
-        self.slider_img = pygame.transform.scale(self.slider_img, (20, 20))
+        # self.slider_img = pygame.transform.scale(self.slider_img, (20, 20))
 
         box_width = SCREEN_WIDTH // 1.5
         box_height = SCREEN_HEIGHT // 1.2
