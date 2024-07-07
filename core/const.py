@@ -2,7 +2,7 @@ import pygame
 from typing import Tuple
 
 
-BASE_FPS: int = 6
+BASE_FPS: int = 9
 SCREEN_WIDTH: int = 750
 SCREEN_HEIGHT: int = 750
 BLOCK_SIZE: int = 50  # 25 | 50 | 150 | 250
