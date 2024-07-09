@@ -4,5 +4,5 @@ from states.menu import Menu
 from states.settings import Settings
 from typing import Tuple
 
-__all__: Tuple[str, ...] = ("State", "StateManager")
+__all__ = ("State", "StateManager")
 GAME_STATES: Tuple[State, ...] = (Game, Menu, Settings)
